@@ -1,21 +1,28 @@
 import React from "react";
+import { nFormatter } from "../helper";
 import "../video-card.css";
-const VideoCard = () => {
+
+const VideoCard = video => {
+  const { id, snippet, statistics, contentDetails } = video;
   return (
     <div className={"video-card"}>
       <div
         className={"thumbnail"}
         style={{
-          backgroundImage:
-            "URL(https://i.ytimg.com/vi/Bv_5Zv5c-Ts/hqdefault.jpg?sqp=-oaymwEZCNACELwBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLBuEvpvDrCvXDAYFgZ2Ed93KNYbEg)"
+          backgroundImage: `URL(${snippet.thumbnails.default.url})`
         }}
       />
       <div className={"content"}>
         <div className={"title"}>
-          JavaScript: Understanding the Weird Parts - The First 3.5 Hours...
+          {snippet.title.length > 30
+            ? snippet.slice(0, 30) + "..."
+            : snippet.title}
+          ...
         </div>
-        <div className={"channel-title"}>Tony Alicea</div>
-        <div className={"views"}>1.7M Views</div>
+        <div className={"channel-title"}>{snippet.channelTitle}</div>
+        <div className={"views"}>
+          {nFormatter(statistics.viewCount, 1)} Views
+        </div>
       </div>
     </div>
   );
