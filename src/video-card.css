@@ -1,0 +1,18 @@
+.video-card {
+  display: flex;
+  padding-bottom: 20px;
+}
+.video-card .thumbnail {
+  width: 148px;
+  height: 94px;
+  flex: 0 0 148px;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.video-card .content {
+  margin-left: 10px;
+}
+.video-card .content .title {
+  line-height: 1;
+  font-weight: bold;
+}
