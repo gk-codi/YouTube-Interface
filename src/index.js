@@ -3,13 +3,26 @@ import ReactDOM from "react-dom";
 
 import "./styles.css";
 
-function App() {
-  return (
-    <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
-    </div>
-  );
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentPageClass: "main-page"
+    };
+  }
+
+  render() {
+    const { currentPageClass } = this.state;
+    return (
+      <div className={`app ${currentPageClass}`}>
+        <div className={"header"} />
+        <div class={"content-wrapper"}>
+          <div className={"main-video"} />
+          <div className={"sidebar"} />
+        </div>
+      </div>
+    );
+  }
 }
 
 const rootElement = document.getElementById("root");
