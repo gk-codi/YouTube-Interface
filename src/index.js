@@ -5,7 +5,7 @@ import MainVideo from "./Components/MainVideo";
 import VideoCard from "./Components/VideoCard";
 import { findVideoDetailsByVideoId } from "./helper";
 
-import youtubeAPI from "./services/YouTube";
+import youtubeAPI, { default_config } from "./services/YouTube";
 import "./styles.css";
 
 class App extends React.Component {
@@ -46,12 +46,16 @@ class App extends React.Component {
       .get("/search", {
         params: {
           part: "snippet",
-          q: this.state.search.q
+          q: this.state.search.q,
+          ...default_config
         }
       })
       .then(response => {
-        if (response.items !== undefined && response.items.length > 0) {
-          this.selectVideo(response.items[0]);
+        if (
+          response.data.items !== undefined &&
+          response.data.items.length > 0
+        ) {
+          this.selectVideo(response.data.items[0]);
         }
       })
       .carch(error => {
@@ -68,8 +72,11 @@ class App extends React.Component {
         }
       })
       .then(response => {
-        if (response.items !== undefined && response.items.length > 0) {
-          this.setState({ channelDetails: response.items[0] });
+        if (
+          response.data.items !== undefined &&
+          response.data.items.length > 0
+        ) {
+          this.setState({ channelDetails: response.data.items[0] });
         }
       })
       .catch(error => {
@@ -81,12 +88,16 @@ class App extends React.Component {
       .get("/videos", {
         params: {
           part: "snippet,contentDetails,statistics",
-          id: videoIds.toString()
+          id: videoIds.toString(),
+          ...default_config
         }
       })
       .then(response => {
-        if (response.items !== undefined && response.items.length > 0) {
-          const relatedVideosDetails = response.items;
+        if (
+          response.data.items !== undefined &&
+          response.data.items.length > 0
+        ) {
+          const relatedVideosDetails = response.data.items;
           this.setState(relatedVideosDetails);
         }
       })
@@ -101,11 +112,12 @@ class App extends React.Component {
         params: {
           part: "snippet",
           relatedToVideoId: videoId,
-          type: "video"
+          type: "video",
+          ...default_config
         }
       })
       .then(function(response) {
-        this.setState({ relatedVideos: response.items });
+        this.setState({ relatedVideos: response.data.items });
       })
       .catch(function(error) {
         console.log(error);
@@ -113,6 +125,7 @@ class App extends React.Component {
       });
   }
   getVideoDetails(videoId, channelId) {
+    console.log("video Id => ", videoId);
     if (channelId !== undefined) {
       this.getChannelDetails(channelId);
     }
@@ -120,12 +133,17 @@ class App extends React.Component {
       .get("/videos", {
         params: {
           part: "snippet,contentDetails,statistics",
-          id: videoId
+          id: videoId,
+          ...default_config
         }
       })
       .then(response => {
-        if (response.items !== undefined && response.items.length > 0) {
-          const video = response.items[0];
+        console.log("response => ", response);
+        if (
+          response.data.items !== undefined &&
+          response.data.items.length > 0
+        ) {
+          const video = response.data.items[0];
           this.setState({ video });
           if (channelId === undefined) {
             this.getChannelDetails(video.snippet.channelId);
@@ -134,7 +152,7 @@ class App extends React.Component {
         }
       })
       .catch(error => {
-        console.error(error);
+        console.error("error 1 =>", error);
       });
   }
 
@@ -162,6 +180,7 @@ class App extends React.Component {
             search={search}
           />
         </div>
+        {video !== null ? video.id : "not availabe"}
         {video !== null && channelDetails !== null ? (
           <AppContent {...{ relatedVideos, videoId, video, channelDetails }} />
         ) : null}

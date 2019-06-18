@@ -15,7 +15,6 @@ const Header = ({ handleSearchInputChange, handleSubmitEvents, search }) => {
           <input
             type="text"
             onChange={handleSearchInputChange}
-            defaultValue={search.q}
             onKeyDown={event => {
               if(event.key ==='Enter'){
                 handleSubmitEvents(event);
