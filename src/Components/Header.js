@@ -16,15 +16,19 @@ const Header = ({ handleSearchInputChange, handleSubmitEvents, search }) => {
             type="text"
             onChange={handleSearchInputChange}
             onKeyDown={event => {
-              if(event.key ==='Enter'){
+              if (event.key === 'Enter') {
                 handleSubmitEvents(event);
               }
             }}
             value={search.q}
           />
           <button onClick={handleSubmitEvents}>S</button>
+
         </div>
+
+
       </div>
+     
       <div className={"right-wrapper"}>
         <div className={"icons"}>
           <VideoCall />

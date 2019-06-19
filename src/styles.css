@@ -1,39 +1,56 @@
-html,
-body {
+html, body {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
   font-family: Roboto, Arial, sans-serif;
 }
+
 .app {
   display: grid;
   grid-template-columns: auto;
   grid-template-rows: auto auto;
 }
+
 .content-wrapper {
   margin: 20px;
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-gap: 20px;
 }
+
 .sidebar h3 {
   line-height: 1;
   margin: 0;
   margin-bottom: 10px;
 }
+
 .sidebar .videos-list {
   display: inline-grid;
   grid-gap: 15px;
 }
+
 .sidebar .video-card:first-child {
   border-bottom: 1px solid gray;
 }
+
 .navigation-bar {
-  height: 50px;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: auto;
   align-items: center;
+
+  box-shadow: 0 5px rgba(255, 255,200,0.6);
+  background-color: #fcfcfc;
+}
+.suggession-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: auto;
+  align-items: center;
+}
+.navigation-bar .left-wrapper,
+.navigation-bar .right-wrapper {
+  max-height: 50px;
 }
 
 .navigation-bar .logo {
@@ -43,13 +60,16 @@ body {
   box-sizing: border-box;
   text-align: center;
 }
+
 .navigation-bar .logo img {
   width: auto;
   height: 30px;
 }
+
 .navigation-bar .search-wrapper {
   position: relative;
 }
+
 .navigation-bar .search-wrapper input {
   border: 1px solid black;
   width: 100%;
@@ -57,6 +77,7 @@ body {
   padding: 0;
   box-sizing: border-box;
 }
+
 .navigation-bar .search-wrapper button {
   position: absolute;
   top: 0;
@@ -65,10 +86,12 @@ body {
   margin: 0;
   width: 50px;
 }
+
 .center-wrapper {
   display: grid;
   align-items: center;
 }
+
 .right-wrapper .icons {
   padding: 0 20px;
   display: grid;
@@ -77,6 +100,26 @@ body {
   justify-content: center;
   align-content: center;
 }
+.header {
+  width: 100%;
+  position: fixed
+}
+.auto-suggession {
+  grid-column-start: 2;
+  background:#fcfcfc;
+  border: 1px solid gray;
+
+}
+.auto-suggession .item {
+padding: 5px 8px;
+}
+.auto-suggession .item:hover {
+  border: 1px solid gray;
+}
+.auto-suggession .item span {
+  line-height: 2;
+}
+
 @media all and (max-width: 1000px) {
   .content-wrapper {
     grid-template-columns: 1fr;

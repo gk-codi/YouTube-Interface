@@ -21,23 +21,15 @@ class App extends React.Component {
       defaultVideoId: "jV8B24rSN5o",
       search: {
         q: ""
-      }
+      },
+      autoSuggession: [
+        { videoTitle: 'Hey you', videoId: 'jV8B24rSN5o' },
+        { videoTitle: 'Hey yous', videoId: 'jV8B24rSN5o' },
+        { videoTitle: 'Hey you 1', videoId: 'jV8B24rSN5o' },
+        { videoTitle: 'Hey yo 3u', videoId: 'jV8B24rSN5o' },
+        { videoTitle: 'Hey you 3', videoId: 'jV8B24rSN5o' },
+      ]
     };
-
-    const functions_to_bind = [
-      'handleSearchInputChange',
-      'handleSubmitEvents',
-      'getVideosBySearchQuery',
-      'getChannelDetails',
-      'getRelatedVideosDetails',
-      'getRelatedVideos',
-      'getVideoDetails',
-      'selectVideo'
-    ]
-
-    functions_to_bind.map(func_name => {
-      // this[func_name] = this[func_name].bind(this);
-    })
   }
   componentDidMount() {
     // this.selectVideo(this.state.defaultVideoId);
@@ -68,7 +60,7 @@ class App extends React.Component {
           response.data.items !== undefined &&
           response.data.items.length > 0
         ) {
-          if(response.data.items.length > 0){
+          if (response.data.items.length > 0) {
             this.selectVideo(response.data.items[0].id.videoId);
           }
         }
@@ -114,14 +106,14 @@ class App extends React.Component {
           response.data.items.length > 0
         ) {
           const relatedVideosDetails = response.data.items;
-          this.setState({relatedVideosDetails});
+          this.setState({ relatedVideosDetails });
         }
       })
       .catch(error => {
         console.error(error);
       });
   }
-  getRelatedVideos = videoId =>  {
+  getRelatedVideos = videoId => {
     youtubeAPI
       .get("/search", {
         params: {
@@ -138,7 +130,7 @@ class App extends React.Component {
         this.setState({ relatedVideos: response.data.items });
         this.getRelatedVideosDetails(videoIds)
       })
-      .catch((error)=> {
+      .catch((error) => {
         // alert(2);
       });
   }
@@ -172,7 +164,7 @@ class App extends React.Component {
       });
   }
 
-  selectVideo = (videoId, channelId)=>  {
+  selectVideo = (videoId, channelId) => {
     this.setState({ videoId });
     this.getVideoDetails(videoId, channelId);
   }
@@ -186,8 +178,9 @@ class App extends React.Component {
       video,
       channelDetails,
       search,
+      autoSuggession
     } = this.state;
-    const { handleSearchInputChange, handleSubmitEvents,selectVideo } = this;
+    const { handleSearchInputChange, handleSubmitEvents, selectVideo } = this;
 
     return (
       <div className={`app ${currentPageClass}`}>
@@ -196,10 +189,15 @@ class App extends React.Component {
             handleSearchInputChange={handleSearchInputChange}
             handleSubmitEvents={handleSubmitEvents}
             search={search}
+            autoSuggession={autoSuggession}
+            selectVideo={selectVideo}
           />
+          {
+          autoSuggession.length > 0 ? <AutoSuggession videoList={autoSuggession} selectVideo={selectVideo} /> : null
+          }
         </div>
         {video !== null && channelDetails !== null ? (
-          <AppContent {...{ relatedVideos,relatedVideosDetails, videoId, video, channelDetails,selectVideo }} />
+          <AppContent {...{ relatedVideos, relatedVideosDetails, videoId, video, channelDetails, selectVideo }} />
         ) : null}
       </div>
     );
@@ -229,7 +227,7 @@ const AppContent = ({
               id.videoId
             );
             if (videoItem !== undefined) {
-              return <VideoCard key={videoItem.id} video={videoItem} selectVideo={selectVideo}/>;
+              return <VideoCard key={videoItem.id} video={videoItem} selectVideo={selectVideo} />;
             } else {
               return null;
             }
@@ -239,5 +237,29 @@ const AppContent = ({
     </div>
   );
 };
+
+const AutoSuggession = ({ videoList, selectVideo }) => {
+  return (
+    <div className={'suggession-wrapper'}>
+      <div className={'auto-suggession'}>
+        {
+          videoList.map((video, index) => {
+
+            return (
+              <div key={index} className={'item'} onClick={event => {
+                event.preventDefault();
+                console.log()
+                selectVideo(video.videoId)
+
+              }}>
+               <span>{video.videoTitle}</span>
+              </div>
+            )
+          })
+        }
+      </div>
+    </div>
+  )
+}
 const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
