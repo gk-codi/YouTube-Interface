@@ -2,10 +2,13 @@ import React from "react";
 import { nFormatter } from "../helper";
 import "../video-card.css";
 
-const VideoCard = video => {
+const VideoCard = ({video,selectVideo}) => {
   const { id, snippet, statistics, contentDetails } = video;
   return (
-    <div className={"video-card"}>
+    <div key={id} className={"video-card"} onClick={ event => {
+      event.preventDefault();
+      selectVideo(id, snippet.channelId)
+    }}>
       <div
         className={"thumbnail"}
         style={{
@@ -15,7 +18,7 @@ const VideoCard = video => {
       <div className={"content"}>
         <div className={"title"}>
           {snippet.title.length > 30
-            ? snippet.slice(0, 30) + "..."
+            ? snippet.title.slice(0, 30) + "..."
             : snippet.title}
           ...
         </div>

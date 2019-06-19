@@ -24,24 +24,36 @@ class App extends React.Component {
       }
     };
 
-    this.handleSearchInputChange = this.handleSearchInputChange.bind(this);
-    this.handleSubmitEvents = this.handleSubmitEvents.bind(this);
+    const functions_to_bind = [
+      'handleSearchInputChange',
+      'handleSubmitEvents',
+      'getVideosBySearchQuery',
+      'getChannelDetails',
+      'getRelatedVideosDetails',
+      'getRelatedVideos',
+      'getVideoDetails',
+      'selectVideo'
+    ]
+
+    functions_to_bind.map(func_name => {
+      // this[func_name] = this[func_name].bind(this);
+    })
   }
   componentDidMount() {
-    this.selectVideo(this.state.defaultVideoId);
+    // this.selectVideo(this.state.defaultVideoId);
   }
 
-  handleSearchInputChange(event) {
+  handleSearchInputChange = event => {
     event.preventDefault();
     const search_query = event.target.value;
     this.setState({ search: { ...this.state.search, q: search_query } });
   }
-  handleSubmitEvents(event) {
+  handleSubmitEvents = event => {
     event.preventDefault();
     this.getVideosBySearchQuery();
   }
 
-  getVideosBySearchQuery() {
+  getVideosBySearchQuery = () => {
     youtubeAPI
       .get("/search", {
         params: {
@@ -51,24 +63,28 @@ class App extends React.Component {
         }
       })
       .then(response => {
+        console.log('response => ', response)
         if (
           response.data.items !== undefined &&
           response.data.items.length > 0
         ) {
-          this.selectVideo(response.data.items[0]);
+          if(response.data.items.length > 0){
+            this.selectVideo(response.data.items[0].id.videoId);
+          }
         }
       })
-      .carch(error => {
+      .catch(error => {
         console.error(error);
       });
   }
 
-  getChannelDetails(channelId) {
+  getChannelDetails = channelId => {
     youtubeAPI
-      .get("/videos", {
+      .get("/channels", {
         params: {
           part: "snippet,contentDetails,statistics",
-          id: channelId
+          id: channelId,
+          ...default_config
         }
       })
       .then(response => {
@@ -83,7 +99,7 @@ class App extends React.Component {
         console.error(error);
       });
   }
-  getRelatedVideosDetails(videoIds) {
+  getRelatedVideosDetails = videoIds => {
     youtubeAPI
       .get("/videos", {
         params: {
@@ -98,15 +114,14 @@ class App extends React.Component {
           response.data.items.length > 0
         ) {
           const relatedVideosDetails = response.data.items;
-          this.setState(relatedVideosDetails);
+          this.setState({relatedVideosDetails});
         }
       })
       .catch(error => {
         console.error(error);
       });
   }
-
-  getRelatedVideos(videoId) {
+  getRelatedVideos = videoId =>  {
     youtubeAPI
       .get("/search", {
         params: {
@@ -116,16 +131,18 @@ class App extends React.Component {
           ...default_config
         }
       })
-      .then(function(response) {
+      .then(response => {
+        const videoIds = response.data.items.map(video => {
+          return video.id.videoId
+        })
         this.setState({ relatedVideos: response.data.items });
+        this.getRelatedVideosDetails(videoIds)
       })
-      .catch(function(error) {
-        console.log(error);
+      .catch((error)=> {
         // alert(2);
       });
   }
-  getVideoDetails(videoId, channelId) {
-    console.log("video Id => ", videoId);
+  getVideoDetails = (videoId, channelId) => {
     if (channelId !== undefined) {
       this.getChannelDetails(channelId);
     }
@@ -138,16 +155,15 @@ class App extends React.Component {
         }
       })
       .then(response => {
-        console.log("response => ", response);
         if (
           response.data.items !== undefined &&
           response.data.items.length > 0
         ) {
           const video = response.data.items[0];
           this.setState({ video });
+          this.getRelatedVideos(videoId);
           if (channelId === undefined) {
             this.getChannelDetails(video.snippet.channelId);
-            this.getRelatedVideos(videoId);
           }
         }
       })
@@ -156,7 +172,7 @@ class App extends React.Component {
       });
   }
 
-  selectVideo(videoId, channelId) {
+  selectVideo = (videoId, channelId)=>  {
     this.setState({ videoId });
     this.getVideoDetails(videoId, channelId);
   }
@@ -166,11 +182,13 @@ class App extends React.Component {
       currentPageClass,
       videoId,
       relatedVideos,
+      relatedVideosDetails,
       video,
       channelDetails,
-      search
+      search,
     } = this.state;
-    const { handleSearchInputChange, handleSubmitEvents } = this;
+    const { handleSearchInputChange, handleSubmitEvents,selectVideo } = this;
+
     return (
       <div className={`app ${currentPageClass}`}>
         <div className={"header"}>
@@ -180,9 +198,8 @@ class App extends React.Component {
             search={search}
           />
         </div>
-        {video !== null ? video.id : "not availabe"}
         {video !== null && channelDetails !== null ? (
-          <AppContent {...{ relatedVideos, videoId, video, channelDetails }} />
+          <AppContent {...{ relatedVideos,relatedVideosDetails, videoId, video, channelDetails,selectVideo }} />
         ) : null}
       </div>
     );
@@ -194,23 +211,25 @@ const AppContent = ({
   relatedVideosDetails,
   videoId,
   video,
-  channelDetails
+  channelDetails,
+  selectVideo
 }) => {
   return (
-    <div class={"content-wrapper"}>
+    <div className={"content-wrapper"}>
       <div className={"main-video"}>
         <MainVideo video={video} channelDetails={channelDetails} />
       </div>
       <div className={"sidebar"}>
         <h3>Up next</h3>
         <div className={"videos-list"}>
+
           {relatedVideos.map(({ id }) => {
-            const video = findVideoDetailsByVideoId(
+            const videoItem = findVideoDetailsByVideoId(
               relatedVideosDetails,
-              id.videId
+              id.videoId
             );
-            if (video !== undefined) {
-              return <VideoCard video={video} />;
+            if (videoItem !== undefined) {
+              return <VideoCard key={videoItem.id} video={videoItem} selectVideo={selectVideo}/>;
             } else {
               return null;
             }

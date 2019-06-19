@@ -46,5 +46,8 @@ export const getHumanDate = dateString => {
 };
 
 export const findVideoDetailsByVideoId = (videos, videoId) => {
-  return videos.find(({ id }) => id === videoId);
+  const video =  videos.find(({ id }) => {
+    return id === videoId
+  });
+  return video; 
 };

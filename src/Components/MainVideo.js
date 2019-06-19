@@ -16,6 +16,7 @@ const MainVideo = ({ video, channelDetails }) => {
         frameBorder={0}
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
+        title={video.snippet.title}
       />
       <div className={"video-descriptions"}>
         <div className={"title-bar"}>

@@ -1,15 +1,15 @@
 import axios from "axios";
 
 const youtubeInstance = axios.create({
-  baseURL: "",
+  baseURL: "https://www.googleapis.com/youtube/v3",
   params: {
-    key: "AIzaSyC_neaZBe-HR6jgexTrGsxJoj3SCSS0274",
+    key: "AIzaSyCdW_I_8WJUQLR30NNmdcOEusJgup8uwRY",
     maxResults: 20
   }
 });
 
 export const default_config = {
-  key: "",
+  key: "AIzaSyCdW_I_8WJUQLR30NNmdcOEusJgup8uwRY",
   maxResults: 20
 };
 
